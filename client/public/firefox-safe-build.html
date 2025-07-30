@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firefox Safe Build - PulseBoardAI</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .warning {
+            background: #fed7d7;
+            border: 1px solid #fc8181;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #9b2c2c;
+        }
+        .solution {
+            background: #c6f6d5;
+            border: 1px solid #68d391;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #276749;
+        }
+        code {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            display: block;
+            margin: 10px 0;
+        }
+        .buttons {
+            margin-top: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #3182ce;
+        }
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦊 Firefox Build Compatibility</h1>
+        
+        <div class="warning">
+            <strong>Firefox Build Issue Detected</strong><br>
+            Firefox has compatibility issues with the build process due to Service Worker conflicts in version 141.0+
+        </div>
+        
+        <p>The PulseBoardAI application uses modern web technologies that can cause crashes in Firefox during the build process.</p>
+        
+        <div class="solution">
+            <strong>Recommended Solutions:</strong>
+            <ul style="text-align: left; margin: 10px 0;">
+                <li><strong>Use Terminal:</strong> Run the build via command line</li>
+                <li><strong>Switch Browser:</strong> Use Chrome, Edge, or Safari for building</li>
+                <li><strong>Development Mode:</strong> Continue using Firefox for development</li>
+            </ul>
+        </div>
+        
+        <h3>Command Line Build (Recommended)</h3>
+        <code>npm run build</code>
+        
+        <h3>Or use our optimized build script:</h3>
+        <code>node build-optimized.js</code>
+        
+        <div class="buttons">
+            <a href="/" class="btn btn-primary">Return to Development</a>
+            <a href="https://www.google.com/chrome/" class="btn btn-secondary" target="_blank">Download Chrome</a>
+        </div>
+        
+        <p style="margin-top: 30px; color: #718096; font-size: 14px;">
+            This compatibility page prevents Firefox crashes while maintaining full functionality in development mode.
+        </p>
+    </div>
+</body>
+</html>
