@@ -1168,7 +1168,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         origin: req.get('origin'),
         referer: req.get('referer')
       },
-      replitDomains: process.env.REPLIT_DOMAINS?.split(',') || [],
+     
       customDomain: process.env.CUSTOM_DOMAIN,
       isCustomDomain: !req.hostname.includes('.replit.app')
     });

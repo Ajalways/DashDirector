@@ -257,20 +257,7 @@ export default function DomainSetup() {
               </div>
 
               <div className="space-y-2">
-                <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                  REPLIT_DOMAINS:
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded text-xs font-mono flex items-center justify-between">
-                  <span>{customDomain ? `${customDomain},*.${customDomain}` : 'yourdomain.com,*.yourdomain.com'}</span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => copyToClipboard(customDomain ? `${customDomain},*.${customDomain}` : 'yourdomain.com,*.yourdomain.com')}
-                  >
-                    <Copy className="w-3 h-3" />
-                  </Button>
-                </div>
-              </div>
+             </div>
 
               <div className="space-y-2">
                 <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -335,7 +322,7 @@ export default function DomainSetup() {
               <div>
                 <div className="font-medium text-sm">Update Environment Variables</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">
-                  Set CUSTOM_DOMAIN and REPLIT_DOMAINS in your Replit environment
+                  
                 </div>
               </div>
             </div>
