@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { enterpriseSecurityService } from '../services/enterpriseSecurityService.js';
 import { enterpriseBrandingService } from '../services/enterpriseBrandingService.js';
 import { enterpriseIntegrationService } from '../services/enterpriseIntegrationService.js';
-import { isAuthenticated } from '../replitAuth.js';
 import multer from 'multer';
 
 const router = Router();
@@ -43,7 +42,7 @@ const apiKeyAuth = async (req: any, res: any, next: any) => {
 };
 
 // Security Routes
-router.get('/security', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.get('/security', requireAdmin, async (req: any, res) => {
   try {
     const settings = await enterpriseSecurityService.getSecuritySettings(req.user.tenantId);
     res.json(settings);
@@ -52,7 +51,7 @@ router.get('/security', isAuthenticated, requireAdmin, async (req: any, res) => 
   }
 });
 
-router.put('/security', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.put('/security', requireAdmin, async (req: any, res) => {
   try {
     await enterpriseSecurityService.updateSecuritySettings(req.user.tenantId, req.body);
     res.json({ success: true });
@@ -62,7 +61,7 @@ router.put('/security', isAuthenticated, requireAdmin, async (req: any, res) => 
 });
 
 // API Key Management
-router.get('/api-keys', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.get('/api-keys', requireAdmin, async (req: any, res) => {
   try {
     const keys = await enterpriseSecurityService.listApiKeys(req.user.tenantId);
     res.json(keys);
@@ -71,7 +70,7 @@ router.get('/api-keys', isAuthenticated, requireAdmin, async (req: any, res) => 
   }
 });
 
-router.post('/api-keys', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.post('/api-keys', requireAdmin, async (req: any, res) => {
   try {
     const { name, permissions } = req.body;
     const apiKey = await enterpriseSecurityService.generateApiKey(
@@ -85,7 +84,7 @@ router.post('/api-keys', isAuthenticated, requireAdmin, async (req: any, res) =>
   }
 });
 
-router.delete('/api-keys/:keyId', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.delete('/api-keys/:keyId', requireAdmin, async (req: any, res) => {
   try {
     await enterpriseSecurityService.revokeApiKey(req.params.keyId, req.user.tenantId);
     res.json({ success: true });
@@ -95,7 +94,7 @@ router.delete('/api-keys/:keyId', isAuthenticated, requireAdmin, async (req: any
 });
 
 // Theme and Branding Routes
-router.get('/theme', isAuthenticated, async (req: any, res) => {
+router.get('/theme', async (req: any, res) => {
   try {
     const theme = await enterpriseBrandingService.getThemeConfiguration(req.user.tenantId);
     res.json(theme);
@@ -104,7 +103,7 @@ router.get('/theme', isAuthenticated, async (req: any, res) => {
   }
 });
 
-router.put('/theme', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.put('/theme', requireAdmin, async (req: any, res) => {
   try {
     await enterpriseBrandingService.updateThemeConfiguration(req.user.tenantId, req.body);
     res.json({ success: true });
@@ -130,7 +129,7 @@ router.get('/theme/css', async (req: any, res) => {
   }
 });
 
-router.get('/branding/assets', isAuthenticated, async (req: any, res) => {
+router.get('/branding/assets', async (req: any, res) => {
   try {
     const assets = await enterpriseBrandingService.getBrandingAssets(req.user.tenantId);
     res.json(assets);
@@ -139,7 +138,7 @@ router.get('/branding/assets', isAuthenticated, async (req: any, res) => {
   }
 });
 
-router.post('/branding/assets', isAuthenticated, requireAdmin, upload.single('asset'), async (req: any, res) => {
+router.post('/branding/assets', requireAdmin, upload.single('asset'), async (req: any, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
@@ -158,7 +157,7 @@ router.post('/branding/assets', isAuthenticated, requireAdmin, upload.single('as
 });
 
 // Integration Routes
-router.get('/integrations', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.get('/integrations', requireAdmin, async (req: any, res) => {
   try {
     const integrations = await enterpriseIntegrationService.getIntegrations(req.user.tenantId);
     res.json(integrations);
@@ -167,7 +166,7 @@ router.get('/integrations', isAuthenticated, requireAdmin, async (req: any, res)
   }
 });
 
-router.post('/integrations', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.post('/integrations', requireAdmin, async (req: any, res) => {
   try {
     const { integrationType, integrationName, configuration, credentials } = req.body;
     
@@ -185,7 +184,7 @@ router.post('/integrations', isAuthenticated, requireAdmin, async (req: any, res
   }
 });
 
-router.get('/integrations/templates', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.get('/integrations/templates', requireAdmin, async (req: any, res) => {
   try {
     const templates = enterpriseIntegrationService.getIntegrationTemplates();
     res.json(templates);
@@ -195,7 +194,7 @@ router.get('/integrations/templates', isAuthenticated, requireAdmin, async (req:
 });
 
 // Webhook Routes
-router.get('/webhooks', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.get('/webhooks', requireAdmin, async (req: any, res) => {
   try {
     const webhooks = await enterpriseIntegrationService.getWebhooks(req.user.tenantId);
     res.json(webhooks);
@@ -204,7 +203,7 @@ router.get('/webhooks', isAuthenticated, requireAdmin, async (req: any, res) => 
   }
 });
 
-router.post('/webhooks', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.post('/webhooks', requireAdmin, async (req: any, res) => {
   try {
     const { name, url, events } = req.body;
     
@@ -222,7 +221,7 @@ router.post('/webhooks', isAuthenticated, requireAdmin, async (req: any, res) =>
 });
 
 // Data Export Routes
-router.post('/export', isAuthenticated, requireAdmin, async (req: any, res) => {
+router.post('/export', requireAdmin, async (req: any, res) => {
   try {
     const { format, options } = req.body;
     
