@@ -1,4 +1,4 @@
-import { db } from '../storage';
+import { db } from '../storage.js';
 import { integrations, webhooks } from '../../shared/enterprise-schema.js';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
@@ -153,7 +153,10 @@ export class EnterpriseIntegrationService {
       return { success: true, status: response.status };
     } catch (error) {
       console.error('Webhook delivery failed:', error);
-      return { success: false, error: error.message };
+      return { 
+        success: false, 
+        error: typeof error === 'object' && error !== null && 'message' in error ? (error as { message: string }).message : String(error)
+      };
     }
   }
 

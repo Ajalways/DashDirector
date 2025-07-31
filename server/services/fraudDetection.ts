@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { db } from '../db';
+import { db } from '../db.js';
 import { fraudCases, fraudPatterns, transactions, fraudModels } from '@shared/schema';
 import { eq, and, desc, sql, gte, lte } from 'drizzle-orm';
 import type { InsertFraudCase, InsertTransaction, FraudPattern, Transaction } from '@shared/schema';
@@ -415,13 +415,15 @@ Focus on:
    * Get recent transactions for context
    */
   private async getRecentTransactions(tenantId: string, userId?: string): Promise<Transaction[]> {
-    let whereCondition = eq(transactions.tenantId, tenantId);
-    
+    let whereCondition;
+
     if (userId) {
       whereCondition = and(
         eq(transactions.tenantId, tenantId),
         eq(transactions.userId, userId)
       );
+    } else {
+      whereCondition = eq(transactions.tenantId, tenantId);
     }
 
     return await db.select()

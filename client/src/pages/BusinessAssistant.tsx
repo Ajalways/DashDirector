@@ -25,23 +25,25 @@ import {
 } from 'lucide-react';
 import { Link } from 'wouter';
 
+interface Insight {
+  type: 'fraud' | 'loss' | 'opportunity' | 'metric';
+  title: string;
+  value?: string | number;
+  records?: Array<{
+    id: string;
+    type: string;
+    title: string;
+    amount?: number;
+    date?: string;
+  }>;
+}
+
 interface ChatMessage {
   id: string;
   type: 'user' | 'assistant';
   content: string;
   timestamp: Date;
-  insights?: {
-    type: 'fraud' | 'loss' | 'opportunity' | 'metric';
-    title: string;
-    value?: string | number;
-    records?: Array<{
-      id: string;
-      type: string;
-      title: string;
-      amount?: number;
-      date?: string;
-    }>;
-  }[];
+  insights?: Insight[];
 }
 
 const SAMPLE_QUESTIONS = [
@@ -125,7 +127,7 @@ export default function BusinessAssistant() {
     }
   };
 
-  const renderInsight = (insight: ChatMessage['insights'][0]) => {
+  const renderInsight = (insight: Insight) => {
     const getInsightIcon = () => {
       switch (insight.type) {
         case 'fraud': return <AlertTriangle className="w-4 h-4 text-red-500" />;

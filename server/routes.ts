@@ -1,18 +1,18 @@
 import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertTaskSchema, insertFraudCaseSchema, insertTenantSchema, insertFraudPatternSchema, insertTransactionSchema } from "@shared/schema";
-import { fraudDetectionService } from "./services/fraudDetection";
-import { accountingService } from "./services/accountingService";
-import { documentService } from "./services/documentService";
-import { auditService } from "./services/auditService";
-import { performanceInsightsService } from "./services/performanceInsights";
-import { financialAnalysisService } from "./services/financialAnalysis";
-import { spendingAnalyzerService } from "./services/spendingAnalyzer";
-import { businessRecommendationEngine } from "./services/businessRecommendationEngine";
-import enterpriseRoutes from "./routes/enterpriseRoutes";
+import { storage } from "./storage.js";
+import { setupAuth, isAuthenticated } from "./replitAuth.js";
+import { insertTaskSchema, insertFraudCaseSchema, insertTenantSchema, insertFraudPatternSchema, insertTransactionSchema } from "../shared/schema.js";
+import { fraudDetectionService } from "./services/fraudDetection.js";
+import { accountingService } from "./services/accountingService.js";
+import { documentService } from "./services/documentService.js";
+import { auditService } from "./services/auditService.js";
+import { performanceInsightsService } from "./services/performanceInsights.js";
+import { financialAnalysisService } from "./services/financialAnalysis.js";
+import { spendingAnalyzerService } from "./services/spendingAnalyzer.js";
+import { businessRecommendationEngine } from "./services/businessRecommendationEngine.js";
+import enterpriseRoutes from "./routes/enterpriseRoutes.js";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
@@ -1006,7 +1006,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const tenantId = req.user.claims.tenantId;
       const limit = parseInt(req.query.limit as string) || 50;
-      const { timelineService } = await import('./services/timelineService');
+      const { timelineService } = await import('./services/timelineService.js');
       const timeline = await timelineService.getComprehensiveTimeline(tenantId, limit);
       res.json(timeline);
     } catch (error) {
@@ -1018,7 +1018,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/timeline/detect-changes', isAuthenticated, async (req: any, res) => {
     try {
       const tenantId = req.user.claims.tenantId;
-      const { timelineService } = await import('./services/timelineService');
+      const { timelineService } = await import('./services/timelineService.js');
       const changes = await timelineService.detectBusinessChanges(tenantId);
       res.json(changes);
     } catch (error) {
@@ -1031,7 +1031,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/timeline/seed-demo-data', isAuthenticated, async (req: any, res) => {
     try {
       const tenantId = req.user.claims.tenantId;
-      const { seedTimelineData } = await import('./scripts/seedTimelineData');
+      const { seedTimelineData } = await import('./scripts/seedTimelineData.js');
       await seedTimelineData(tenantId);
       res.json({ message: 'Demo data seeded successfully' });
     } catch (error) {
@@ -1050,7 +1050,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Question is required' });
       }
 
-      const { businessAssistantService } = await import('./services/businessAssistantService');
+      const { businessAssistantService } = await import('./services/businessAssistantService.js');
       const response = await businessAssistantService.askQuestion(tenantId, question);
       
       res.json(response);
@@ -1063,7 +1063,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Owner/Admin routes
   app.post('/api/admin/create-owner-account', async (req, res) => {
     try {
-      const { createOwnerTestAccount } = await import('./scripts/createOwnerAccount');
+      const { createOwnerTestAccount } = await import('./scripts/createOwnerAccount.js');
       const result = await createOwnerTestAccount();
       res.json(result);
     } catch (error) {
@@ -1131,7 +1131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'User not found' });
       }
       
-      const { getUserPermissions } = await import('./middleware/roleBasedAccess');
+      const { getUserPermissions } = await import('./middleware/roleBasedAccess.js');
       const permissions = getUserPermissions(user.role, user.permissions);
       
       res.json({

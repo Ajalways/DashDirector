@@ -200,7 +200,13 @@ export default function EmployeeDirectory() {
     return matchesSearch && matchesDepartment && matchesRole;
   });
 
-  const departments = Array.from(new Set((employees as UserType[]).map((emp: UserType) => emp.department).filter(Boolean)));
+  const departments = Array.from(
+    new Set(
+      (employees as UserType[])
+        .map((emp: UserType) => emp.department)
+        .filter((dept): dept is string => typeof dept === 'string' && dept.length > 0)
+    )
+  );
 
   if (isLoading) {
     return (

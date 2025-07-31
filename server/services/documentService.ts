@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { storage } from '../storage';
+import { storage } from '../storage.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -164,7 +164,7 @@ Return the response as JSON:
         doc.originalName,
         doc.ocrText || '',
         JSON.stringify(doc.ocrMetadata || {}),
-        (doc.tags || []).join(' ')
+        (Array.isArray(doc.tags) ? doc.tags : []).join(' ')
       ].join(' ').toLowerCase();
 
       return searchTerms.some(term => searchableText.includes(term));
@@ -243,7 +243,9 @@ Return as JSON:
     return processableTypes.includes(mimeType);
   }
 
-  private getClaudeMediaType(mimeType: string): string {
+  private getClaudeMediaType(
+    mimeType: string
+  ): 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp' {
     switch (mimeType) {
       case 'image/jpeg':
         return 'image/jpeg';
@@ -251,6 +253,8 @@ Return as JSON:
         return 'image/png';
       case 'image/webp':
         return 'image/webp';
+      case 'image/gif':
+        return 'image/gif';
       default:
         return 'image/jpeg';
     }

@@ -21,7 +21,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { CompanyBranding } from './TenantBranding';
+import { CompanyBranding } from './TenantBranding.js';
 import { Settings } from 'lucide-react';
 
 interface SettingsModalProps {

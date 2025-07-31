@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { storage } from '../storage';
+import { storage } from '../storage.js';
 
 /*
 <important_code_snippet_instructions>

@@ -1,5 +1,7 @@
-import { storage } from '../storage';
-import type { InsertUser, InsertTenant } from '@shared/schema';
+import { storage } from '../storage.js';
+// Update the import path to the correct location of your schema types
+// Update the import path below to the actual location of your schema types file
+import type { UpsertUser, InsertTenant } from '../../shared/schema.js';
 
 export async function createOwnerTestAccount() {
   console.log('Creating OWNER test account...');
@@ -46,7 +48,7 @@ export async function createOwnerTestAccount() {
     console.log('Demo tenant created:', tenant.id);
     
     // Create owner user with full permissions
-    const ownerUser: InsertUser = {
+    const ownerUser: UpsertUser = {
       id: 'owner-demo-account-001',
       email: 'owner+demo@pulseboard.ai',
       firstName: 'Demo',
@@ -114,34 +116,27 @@ async function seedOwnerTestData(tenantId: string) {
   console.log('Seeding owner test data...');
   
   // Seed timeline data for demonstration
-  const { seedTimelineData } = await import('./seedTimelineData');
+  const { seedTimelineData } = await import('./seedTimelineData.js');
   await seedTimelineData(tenantId);
   
   // Add some fraud cases
   await storage.createFraudCase({
     tenantId,
-    title: 'Suspicious Payment Pattern',
-    description: 'Multiple small payments from same IP address',
-    severity: 'high',
     status: 'open',
-    category: 'payment_fraud',
     amount: 2500,
-    metadata: {
-      ip_address: '192.168.1.100',
-      payment_count: 15,
-      detection_method: 'ai_pattern_analysis'
-    }
+    // If metadata is needed, update the type definition to include it
+    // Otherwise, remove metadata as shown here
   });
   
   // Add some tasks
   await storage.createTask({
     tenantId,
     title: 'Review Q4 Financial Reports',
+    createdById: 'owner-demo-account-001',
     description: 'Comprehensive review of quarterly financial performance',
     status: 'in_progress',
     priority: 'high',
     assigneeId: 'owner-demo-account-001',
-    category: 'finance',
     dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     tags: ['finance', 'quarterly', 'review']
   });
@@ -149,14 +144,14 @@ async function seedOwnerTestData(tenantId: string) {
   await storage.createTask({
     tenantId,
     title: 'Investigate Fraud Alert #12',
+    createdById: 'owner-demo-account-001',
     description: 'Follow up on automated fraud detection alert',
     status: 'todo',
     priority: 'urgent',
     assigneeId: 'owner-demo-account-001',
-    category: 'security',
     dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
     tags: ['fraud', 'security', 'urgent']
   });
-  
+
   console.log('Owner test data seeded successfully');
 }

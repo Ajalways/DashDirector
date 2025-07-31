@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import App from "./App";
+import App from "./App.js";
 import "./index.css";
 
 // COMPREHENSIVE Firefox compatibility: Prevent Service Worker crashes
@@ -24,10 +24,12 @@ if (typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Firefox') !
   // Block Workers at the main.tsx level as well
   const originalWorker = window.Worker;
   if (originalWorker) {
-    window.Worker = function() {
-      console.log('Worker blocked in main.tsx for Firefox');
-      throw new Error('Workers disabled for Firefox compatibility');
-    };
+    window.Worker = (class {
+      constructor() {
+        console.log('Worker blocked in main.tsx for Firefox');
+        throw new Error('Workers disabled for Firefox compatibility');
+      }
+    } as unknown) as typeof Worker;
   }
   
   // Override fetch with Firefox-safe headers
@@ -45,9 +47,11 @@ if (typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Firefox') !
   
   // Additional safety: Override any remaining problematic APIs
   if (typeof window.BroadcastChannel !== 'undefined') {
-    window.BroadcastChannel = function() {
-      throw new Error('BroadcastChannel disabled for Firefox compatibility');
-    };
+    window.BroadcastChannel = class {
+      constructor() {
+        throw new Error('BroadcastChannel disabled for Firefox compatibility');
+      }
+    } as unknown as typeof BroadcastChannel;
   }
 }
 

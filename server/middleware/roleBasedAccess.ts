@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import { storage } from '../storage';
+import { storage } from '../storage.js';
 
 export interface RolePermissions {
   dashboard?: { read?: boolean; write?: boolean; admin?: boolean };

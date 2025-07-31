@@ -1,5 +1,5 @@
-import { storage } from '../storage';
-import type { InsertKpiMetric, InsertTimelineEvent, InsertBusinessChange } from '@shared/schema';
+import { storage } from '../storage.js';
+import type { InsertKpiMetric, InsertTimelineEvent, InsertBusinessChange } from '../../shared/schema.js';
 
 export async function seedTimelineData(tenantId: string) {
   // Seed some KPI metrics to demonstrate change detection

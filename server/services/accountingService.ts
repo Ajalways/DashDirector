@@ -1,7 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { db } from '../db';
-import { storage } from '../storage';
-import { accountingTransactions, profitLeaks, businessInsights, auditAlerts } from '@shared/schema';
+import { db } from '../db.js';
+import { storage } from '../storage.js';
+// Update the import path to the correct relative location if '@shared/schema' does not exist
+import { accountingTransactions, profitLeaks } from '../../shared/schema.js';
 import { eq, and, desc, gte, lte, count, sum } from 'drizzle-orm';
 
 const DEFAULT_MODEL_STR = "claude-sonnet-4-20250514";
@@ -287,9 +288,9 @@ Keep it under 300 words and avoid financial jargon.
     }, {} as Record<string, number>);
 
     return Object.entries(categoryTotals)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([,a], [,b]) => (b as number) - (a as number))
       .slice(0, 5)
-      .map(([category, amount]) => `- ${category}: $${amount / 100}`)
+      .map(([category, amount]) => `- ${category}: $${(amount as number) / 100}`)
       .join('\n');
   }
 }

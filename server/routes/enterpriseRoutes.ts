@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { enterpriseSecurityService } from '../services/enterpriseSecurityService';
-import { enterpriseBrandingService } from '../services/enterpriseBrandingService';
-import { enterpriseIntegrationService } from '../services/enterpriseIntegrationService';
-import { isAuthenticated } from '../replitAuth';
+import { enterpriseSecurityService } from '../services/enterpriseSecurityService.js';
+import { enterpriseBrandingService } from '../services/enterpriseBrandingService.js';
+import { enterpriseIntegrationService } from '../services/enterpriseIntegrationService.js';
+import { isAuthenticated } from '../replitAuth.js';
 import multer from 'multer';
 
 const router = Router();

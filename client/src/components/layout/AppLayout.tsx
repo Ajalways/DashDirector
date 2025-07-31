@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Header } from './Header';
-import { Navigation } from './Navigation';
+import { Header } from './Header.js';
+import { Navigation } from './Navigation.js';
 import { useTenant } from '@/contexts/TenantContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 

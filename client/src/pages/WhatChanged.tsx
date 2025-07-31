@@ -135,24 +135,26 @@ function BusinessChangeCard({ change }: { change: BusinessChange }) {
             </div>
           )}
 
-          {change.relatedEvents && Array.isArray(change.relatedEvents) && change.relatedEvents.length > 0 && (
+            {Array.isArray(change.relatedEvents) && change.relatedEvents.length > 0 && (
             <div className="mt-3">
               <p className="text-sm font-medium mb-2">Related Events:</p>
               <div className="space-y-1">
-                {change.relatedEvents.map((event: any, index: number) => (
-                  <div key={index} className="text-xs bg-gray-50 dark:bg-gray-800 p-2 rounded flex items-center space-x-2">
-                    <Zap className="w-3 h-3 text-gray-500" />
-                    <span>{event.title || event.type}</span>
-                    {event.date && (
-                      <span className="text-gray-500">
-                        ({format(new Date(event.date), 'MMM d')})
-                      </span>
-                    )}
-                  </div>
-                ))}
+              {change.relatedEvents.map((event: any, index: number) => (
+                <div key={index} className="text-xs bg-muted dark:bg-gray-800 p-2 rounded flex items-center space-x-2">
+                <Zap className="w-3 h-3 text-gray-500" />
+                <span>
+                  {event.title ?? event.type ?? ''}
+                </span>
+                {event.date && (
+                  <span className="text-gray-500">
+                  ({format(new Date(event.date), 'MMM d')})
+                  </span>
+                )}
+                </div>
+              ))}
               </div>
             </div>
-          )}
+            )}
         </div>
       </CardContent>
     </Card>
@@ -187,12 +189,7 @@ function TimelineEventCard({ event }: { event: TimelineEvent }) {
           <p className="text-sm text-gray-600 dark:text-gray-300">
             {event.description}
           </p>
-          {event.metadata && Object.keys(event.metadata).length > 0 && (
-            <div className="mt-2 text-xs text-gray-500">
-              <span className="font-medium">Details: </span>
-              {JSON.stringify(event.metadata)}
-            </div>
-          )}
+            
         </CardContent>
       )}
     </Card>
@@ -205,10 +202,14 @@ export default function WhatChanged() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: timeline = [], isLoading } = useQuery<TimelineItem[]>({
+  const { data, isLoading } = useQuery<TimelineItem[]>({
     queryKey: ['/api/timeline/comprehensive', selectedPeriod],
-    queryFn: () => apiRequest('GET', `/api/timeline/comprehensive?limit=${selectedPeriod}`),
+    queryFn: async () => {
+      const response = await apiRequest('GET', `/api/timeline/comprehensive?limit=${selectedPeriod}`);
+      return response.json();
+    },
   });
+  const timeline: TimelineItem[] = Array.isArray(data) ? data : [];
 
   const detectChangesMutation = useMutation({
     mutationFn: () => apiRequest('POST', '/api/timeline/detect-changes'),
@@ -402,9 +403,9 @@ export default function WhatChanged() {
           filteredTimeline.map((item) => (
             <div key={item.id}>
               {item.type === 'business_change' ? (
-                <BusinessChangeCard change={item as BusinessChange} />
+                <BusinessChangeCard change={item as unknown as BusinessChange} />
               ) : (
-                <TimelineEventCard event={item as TimelineEvent} />
+                <TimelineEventCard event={item as unknown as TimelineEvent} />
               )}
             </div>
           ))

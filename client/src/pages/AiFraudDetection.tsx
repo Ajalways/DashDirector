@@ -57,35 +57,46 @@ export default function AiFraudDetection() {
   // Fetch fraud statistics
   const { data: stats, isLoading: statsLoading } = useQuery<FraudStats>({
     queryKey: ['/api/fraud/stats'],
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 30000,
   });
 
   // Fetch recent transactions
-  const { data: transactions, isLoading: transactionsLoading } = useQuery({
+  const { data: transactions = [], isLoading: transactionsLoading } = useQuery<any[]>({
     queryKey: ['/api/fraud/transactions'],
   });
 
   // Fetch flagged transactions
-  const { data: flaggedTransactions } = useQuery({
+  const { data: flaggedTransactions = [] } = useQuery<any[]>({
     queryKey: ['/api/fraud/transactions', 'flagged'],
-    queryFn: () => apiRequest('GET', '/api/fraud/transactions?flagged=true'),
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/fraud/transactions?flagged=true');
+      if (response instanceof Response) {
+        return await response.json();
+      }
+      return response;
+    },
   });
 
   // Fetch fraud patterns
-  const { data: patterns } = useQuery({
+  const { data: patterns = [] } = useQuery<any[]>({
     queryKey: ['/api/fraud/patterns'],
   });
 
   // Transaction analysis mutation
   const analyzeTransactionMutation = useMutation({
     mutationFn: async (transactionData: any) => {
-      return await apiRequest('POST', '/api/fraud/analyze-transaction', {
+      const response = await apiRequest('POST', '/api/fraud/analyze-transaction', {
         ...transactionData,
-        amount: Math.round(parseFloat(transactionData.amount) * 100), // Convert to cents
+        amount: Math.round(parseFloat(transactionData.amount) * 100),
         merchantInfo: JSON.parse(transactionData.merchantInfo || '{}'),
         deviceInfo: JSON.parse(transactionData.deviceInfo || '{}'),
         locationInfo: JSON.parse(transactionData.locationInfo || '{}')
       });
+      if (response instanceof Response) {
+        const data = await response.json();
+        return data as TransactionAnalysis;
+      }
+      return response as TransactionAnalysis;
     },
     onSuccess: (analysis: TransactionAnalysis) => {
       toast({
@@ -96,7 +107,7 @@ export default function AiFraudDetection() {
       queryClient.invalidateQueries({ queryKey: ['/api/fraud/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/fraud/transactions'] });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: 'Analysis Failed',
         description: 'Unable to analyze transaction. Please try again.',
@@ -360,7 +371,7 @@ export default function AiFraudDetection() {
                 <div>Loading transactions...</div>
               ) : (
                 <div className="space-y-2">
-                  {transactions?.length > 0 ? (
+                  {Array.isArray(transactions) && transactions.length > 0 ? (
                     transactions.map((transaction: any) => (
                       <div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div>
@@ -394,7 +405,7 @@ export default function AiFraudDetection() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {patterns?.length > 0 ? (
+                {Array.isArray(patterns) && patterns.length > 0 ? (
                   patterns.map((pattern: any) => (
                     <div key={pattern.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
@@ -430,7 +441,7 @@ export default function AiFraudDetection() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {flaggedTransactions?.length > 0 ? (
+                {Array.isArray(flaggedTransactions) && flaggedTransactions.length > 0 ? (
                   flaggedTransactions.map((transaction: any) => (
                     <div key={transaction.id} className="flex items-center justify-between p-3 border border-destructive/20 rounded-lg bg-destructive/5">
                       <div>
@@ -438,7 +449,7 @@ export default function AiFraudDetection() {
                         <p className="text-sm text-muted-foreground">
                           ${(transaction.amount / 100).toFixed(2)} {transaction.currency}
                         </p>
-                        {transaction.flaggedReasons?.length > 0 && (
+                        {Array.isArray(transaction.flaggedReasons) && transaction.flaggedReasons.length > 0 && (
                           <div className="flex gap-1 mt-1">
                             {transaction.flaggedReasons.map((reason: string, index: number) => (
                               <Badge key={index} variant="destructive" className="text-xs">{reason}</Badge>

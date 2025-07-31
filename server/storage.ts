@@ -15,6 +15,7 @@ import {
   businessInsights,
   auditAlerts,
   profitLeaks,
+  performanceInsights,
   apiKeys,
   securitySettings,
   brandingAssets,
@@ -54,19 +55,19 @@ import {
   type InsertAuditAlert,
   type ProfitLeak,
   type InsertProfitLeak,
-  type PerformanceInsight,
+  
   type InsertPerformanceInsight,
+  
+  type PerformanceInsight,
   businessChanges,
   type BusinessChange,
   type InsertBusinessChange,
   timelineEvents,
   type TimelineEvent,
   type InsertTimelineEvent,
-  employees,
-  type Employee,
-  type InsertEmployee,
-} from "@shared/schema";
-import { db } from "./db";
+
+} from "../shared/schema.js";
+import { db } from "./db.js";
 import { eq, and, desc, count, sum, gte, lte } from "drizzle-orm";
 
 export interface IStorage {
@@ -120,24 +121,24 @@ export interface IStorage {
   acceptInvitation(token: string, userId: string): Promise<void>;
   
   // Documents
-  async getDocuments(tenantId: string, category?: string): Promise<Document[]>;
-  async createDocument(document: InsertDocument): Promise<Document>;
+   getDocuments(tenantId: string, category?: string): Promise<Document[]>;
+  createDocument(document: InsertDocument): Promise<Document>;
 
   // Business insights
-  async getBusinessInsights(tenantId: string): Promise<BusinessInsight[]>;
-  async createBusinessInsight(insight: InsertBusinessInsight): Promise<BusinessInsight>;
+  getBusinessInsights(tenantId: string): Promise<BusinessInsight[]>;
+  createBusinessInsight(insight: InsertBusinessInsight): Promise<BusinessInsight>;
 
   // Audit alerts
-  async getAuditAlerts(tenantId: string): Promise<AuditAlert[]>;
-  async createAuditAlert(alert: InsertAuditAlert): Promise<AuditAlert>;
+  getAuditAlerts(tenantId: string): Promise<AuditAlert[]>;
+  createAuditAlert(alert: InsertAuditAlert): Promise<AuditAlert>;
 
   // Profit leaks
-  async getProfitLeaks(tenantId: string): Promise<ProfitLeak[]>;
-  async createProfitLeak(leak: InsertProfitLeak): Promise<ProfitLeak>;
+  getProfitLeaks(tenantId: string): Promise<ProfitLeak[]>;
+  createProfitLeak(leak: InsertProfitLeak): Promise<ProfitLeak>;
 
   // Performance insights
-  async getPerformanceInsights(tenantId: string, category?: string): Promise<PerformanceInsight[]>;
-  async createPerformanceInsight(insight: InsertPerformanceInsight): Promise<PerformanceInsight>;
+  getPerformanceInsights(tenantId: string, category?: string): Promise<PerformanceInsight[]>;
+  createPerformanceInsight(insight: InsertPerformanceInsight): Promise<PerformanceInsight>;
 
   // Employee operations
   getEmployees(tenantId: string): Promise<User[]>;

@@ -139,9 +139,9 @@ function InviteTeamMemberModal() {
   );
 }
 
-function TeamMemberCard({ member }: { member: UserType }) {
+function TeamMemberCard({ member }: { member: User }) {
   const { user: currentUser } = useAuth();
-  const RoleIcon = roleIcons[member.role as keyof typeof roleIcons] || User;
+  const RoleIcon = roleIcons[member.role as keyof typeof roleIcons] || UserIcon;
 
   const canManageMember = currentUser?.role === 'admin' && member.id !== currentUser.id;
 
@@ -289,7 +289,7 @@ export default function TeamManagement() {
                 <p className="text-sm text-gray-600 dark:text-gray-400">Users</p>
                 <p className="text-2xl font-bold text-gray-600">{stats.users}</p>
               </div>
-              <User className="w-8 h-8 text-gray-600" />
+              <UserIcon className="w-8 h-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>
@@ -340,7 +340,7 @@ export default function TeamManagement() {
             </Card>
           ))
         ) : filteredMembers && filteredMembers.length > 0 ? (
-          filteredMembers.map((member: UserType) => (
+          filteredMembers.map((member: User) => (
             <TeamMemberCard key={member.id} member={member} />
           ))
         ) : (

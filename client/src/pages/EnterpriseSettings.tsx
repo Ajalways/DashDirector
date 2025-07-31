@@ -33,7 +33,20 @@ export default function EnterpriseSettings() {
   const [showApiKeys, setShowApiKeys] = useState<Record<string, boolean>>({});
 
   // Security Settings
-  const { data: securitySettings } = useQuery({
+  type SecuritySettings = {
+    twoFactorRequired: boolean;
+    sessionTimeoutMinutes?: number;
+    ipWhitelist?: string[];
+    passwordPolicy?: {
+      minLength?: number;
+      requireUppercase?: boolean;
+      requireLowercase?: boolean;
+      requireNumbers?: boolean;
+      requireSpecialChars?: boolean;
+    };
+  };
+
+  const { data: securitySettings } = useQuery<SecuritySettings>({
     queryKey: ['/api/enterprise/security'],
   });
 
@@ -72,7 +85,14 @@ export default function EnterpriseSettings() {
   });
 
   // Theme Configuration
-  const { data: themeConfig } = useQuery({
+  type ThemeConfig = {
+    primaryColor?: string;
+    secondaryColor?: string;
+    accentColor?: string;
+    [key: string]: string | undefined;
+  };
+
+  const { data: themeConfig } = useQuery<ThemeConfig>({
     queryKey: ['/api/enterprise/theme'],
   });
 
@@ -221,19 +241,19 @@ export default function EnterpriseSettings() {
                 <div className="space-y-2">
                   <Label>Requirements</Label>
                   <div className="space-y-2">
-                    {[
+                    {([
                       { key: 'requireUppercase', label: 'Uppercase letters' },
                       { key: 'requireLowercase', label: 'Lowercase letters' },
                       { key: 'requireNumbers', label: 'Numbers' },
                       { key: 'requireSpecialChars', label: 'Special characters' }
-                    ].map(({ key, label }) => (
+                    ] as const).map(({ key, label }) => (
                       <div key={key} className="flex items-center space-x-2">
                         <Switch
-                          checked={securitySettings?.passwordPolicy?.[key]}
+                          checked={!!securitySettings?.passwordPolicy?.[key as keyof typeof securitySettings.passwordPolicy]}
                           onCheckedChange={(checked) => 
                             updateSecurityMutation.mutate({
                               passwordPolicy: {
-                                ...securitySettings?.passwordPolicy,
+                                ...(securitySettings?.passwordPolicy ?? {}),
                                 [key]: checked
                               }
                             })
@@ -288,7 +308,7 @@ export default function EnterpriseSettings() {
                 </div>
 
                 <div className="space-y-2">
-                  {apiKeys?.map((key: any) => (
+                  {(Array.isArray(apiKeys) ? apiKeys : []).map((key: any) => (
                     <div key={key.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
                         <p className="font-medium">{key.name}</p>

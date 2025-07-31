@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { storage } from '../storage';
+import { storage } from '../storage.js';
 
 /*
 <important_code_snippet_instructions>
@@ -70,7 +70,21 @@ class PerformanceInsightsService {
         }))
       );
       
-      return savedInsights;
+      // Ensure each saved insight includes the required 'generatedAt' property
+      return savedInsights.map((insight, idx) => ({
+        ...insight,
+        category: insight.category as PerformanceInsight['category'],
+        priority: insight.priority as PerformanceInsight['priority'],
+        actionItems: Array.isArray(insight.actionItems)
+          ? insight.actionItems.map((item: unknown) => String(item))
+          : [],
+        estimatedImpact: insight.estimatedImpact ?? '',
+        timeframe: insight.timeframe ?? '',
+        metrics: Array.isArray(insight.metrics)
+          ? insight.metrics as PerformanceMetric[]
+          : [],
+        generatedAt: (insight.createdAt ?? new Date())
+      }));
     } catch (error) {
       console.error('Error generating performance insights:', error);
       throw new Error('Failed to generate performance insights');
@@ -193,7 +207,11 @@ Provide 5-7 high-value insights with specific, actionable recommendations.
   }
 
   async getPerformanceInsights(tenantId: string, category?: string): Promise<PerformanceInsight[]> {
-    return storage.getPerformanceInsights(tenantId, category);
+    const insights = await storage.getPerformanceInsights(tenantId, category);
+    return insights.map((insight: any) => ({
+      ...insight,
+      generatedAt: insight.generatedAt ?? new Date()
+    }));
   }
 
   async generatePerformanceReport(tenantId: string): Promise<string> {

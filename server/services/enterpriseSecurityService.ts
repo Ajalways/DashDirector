@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
-import { db } from '../storage';
+import { db } from '../storage.js';
 import { apiKeys, securitySettings } from '../../shared/enterprise-schema.js';
 import { eq, and, desc } from 'drizzle-orm';
 

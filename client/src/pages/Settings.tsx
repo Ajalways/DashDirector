@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SettingsModal } from '@/components/settings/SettingsModal';
-import { TenantBranding } from '@/components/settings/TenantBranding';
 import { useTenant } from '@/contexts/TenantContext';
 import { useAuth } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/badge';

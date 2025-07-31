@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { db } from '../db';
-import { storage } from '../storage';
-import { accountingTransactions, auditAlerts, activities } from '@shared/schema';
+import { db } from '../db.js';
+import { storage } from '../storage.js';
+import { accountingTransactions } from '../../shared/schema.js';
 import { eq, and, desc, gte, count } from 'drizzle-orm';
 
 const DEFAULT_MODEL_STR = "claude-sonnet-4-20250514";
@@ -187,7 +187,7 @@ Only flag genuinely suspicious patterns (confidence > 70%).
     }
 
     // Check for duplicates
-    for (const [key, transactions] of transactionGroups) {
+    for (const [key, transactions] of transactionGroups.entries() as IterableIterator<[string, any[]]>) {
       if (transactions.length > 1) {
         const [amount, vendor] = key.split('-');
         const alert = await storage.createAuditAlert({
@@ -198,7 +198,7 @@ Only flag genuinely suspicious patterns (confidence > 70%).
           severity: 'medium',
           aiConfidence: 80,
           metadata: {
-            transactionIds: transactions.map(t => t.id),
+            transactionIds: transactions.map((t: any) => t.id),
             amount: Number(amount),
             vendor
           }

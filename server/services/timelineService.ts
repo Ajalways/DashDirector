@@ -1,6 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { storage } from '../storage';
-import type { InsertBusinessChange, InsertTimelineEvent, KpiMetric } from '@shared/schema';
+import { storage } from '../storage.js';
+// import type { InsertBusinessChange, InsertTimelineEvent, KpiMetric } from '@shared/schema';
+// FIX: Update the import path below to the actual location of your schema types
+import type { InsertBusinessChange, InsertTimelineEvent, KpiMetric } from '../../shared/schema.js';
 
 /*
 <important_code_snippet_instructions>
@@ -218,7 +220,14 @@ Be specific and actionable.`;
         messages: [{ role: 'user', content: prompt }],
       });
 
-      return Array.isArray(response.content) ? response.content[0].text : response.content;
+      if (Array.isArray(response.content)) {
+        const firstBlock = response.content[0];
+        if ('text' in firstBlock && typeof firstBlock.text === 'string') {
+          return firstBlock.text;
+        }
+        return String(firstBlock);
+      }
+      return typeof response.content === 'string' ? response.content : String(response.content);
     } catch (error) {
       console.error('Error generating change analysis:', error);
       return `${metricType} ${direction} by ${Math.abs(changePercent)}%. Review recent business activities for potential causes.`;

@@ -1,4 +1,4 @@
-import { db } from '../storage';
+import { db } from '../storage.js';
 import { brandingAssets, themeConfigurations } from '../../shared/enterprise-schema.js';
 import { eq, and } from 'drizzle-orm';
 import fs from 'fs/promises';
